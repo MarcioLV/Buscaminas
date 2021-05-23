@@ -12,23 +12,29 @@ class App extends React.Component {
       nivel: 3,
       partidaPerdida: false,
       minasRestante: 0,
+      active: false,
       board: [],
       viewBoard: [],
     };
     this.handleClick = this.handleClick.bind(this);
+    this.handleReboot = this.handleReboot.bind(this);
   }
   componentDidMount() {
     this.createBoard();
   }
 
-  // componentDidUpdate(){
-  //   if(this.state.partidaPerdida){
-  //     alert('Partidad Perdida')
-  //   }
+  handleReboot() {
+    this.createBoard();
+  }
+
+  // newGame(){
+  //   this.createBoard()
+  //   this.setState({partidaPerdida: false})
   // }
 
   handleClick(event, indexF, indexC) {
-    let { viewBoard, partidaPerdida, minasRestante } = this.state;
+    let { viewBoard, partidaPerdida, minasRestante, active } = this.state;
+    active = true
     if (event.button === 2) {
       if (viewBoard[indexF][indexC] === "noVisible") {
         viewBoard[indexF][indexC] = "bandera";
@@ -40,15 +46,12 @@ class App extends React.Component {
     } else if (event.button === 0) {
       let { board } = this.state;
       viewBoard[indexF][indexC] = "visible";
-      //si toque mina pierdo
+
       if (board[indexF][indexC] === -1) {
         partidaPerdida = true;
+        active = false
         viewBoard = this.mostrarMinas(board, viewBoard);
-      }
-      //muestro todas las minas
-      //las minas con bandera no se muestran
-      //las banderas mal ubicadas salen con una cruz
-      else if (board[indexF][indexC] === 0) {
+      } else if (board[indexF][indexC] === 0) {
         viewBoard = this.abrirCasillas(viewBoard, indexF, indexC);
       }
     }
@@ -56,6 +59,7 @@ class App extends React.Component {
       viewBoard: viewBoard,
       partidaPerdida: partidaPerdida,
       minasRestante: minasRestante,
+      active: active,
     });
   }
 
@@ -84,7 +88,7 @@ class App extends React.Component {
         for (let c = -1; c <= 1; c++) {
           const indiceC = indexC + c;
           if (indiceC > -1 && indiceC < cols) {
-            if(viewBoard[indiceF][indiceC] === "noVisible"){
+            if (viewBoard[indiceF][indiceC] === "noVisible") {
               if (board[indiceF][indiceC] === 0) {
                 viewBoard[indiceF][indiceC] = "visible";
                 viewBoard = this.abrirCasillas(viewBoard, indiceF, indiceC);
@@ -120,7 +124,13 @@ class App extends React.Component {
       }
     }
     this.setState(
-      { board: board, viewBoard: viewBoard, minasRestante: minas },
+      {
+        board: board,
+        viewBoard: viewBoard,
+        minasRestante: minas,
+        partidaPerdida: false,
+        active: false,
+      },
       () => {
         this.formatBoard();
       }
@@ -169,7 +179,11 @@ class App extends React.Component {
       <div className="game">
         <div className="container">
           <div className="tablero">
-            <Header minasRestante={this.state.minasRestante} />
+            <Header
+              minasRestante={this.state.minasRestante}
+              handleReboot={this.handleReboot}
+              active={this.state.active}
+            />
             <Board
               board={this.state.board}
               viewBoard={this.state.viewBoard}
