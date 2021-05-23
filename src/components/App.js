@@ -20,14 +20,16 @@ class App extends React.Component {
   }
 
   handleClick(event, indexF, indexC) {
+    let { viewBoard } = this.state;
     if(event.button === 2){
-      //poner bandera
-      //evitar onClick
-      console.log("right-click");
+      if(viewBoard[indexF][indexC] === 0){
+        viewBoard[indexF][indexC] = 2
+      }
+      else if(viewBoard[indexF][indexC] === 2){
+        viewBoard[indexF][indexC] = 0
+      }
     }
     else if(event.button === 0){
-      console.log("hola");
-      let { viewBoard } = this.state;
       let { board } = this.state;
       viewBoard[indexF][indexC] = 1;
       //si toque mina pierdo
@@ -35,8 +37,8 @@ class App extends React.Component {
       if (board[indexF][indexC] === 0) {
         viewBoard = this.abrirCasillas(viewBoard, indexF, indexC);
       }
-      this.setState({ viewBoard: viewBoard });
     }
+    this.setState({ viewBoard: viewBoard });
   }
 
   abrirCasillas(viewBoard, indexF, indexC) {
