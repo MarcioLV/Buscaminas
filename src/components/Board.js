@@ -3,11 +3,11 @@ import React from "react";
 import "./style/Board.css";
 
 function Board(prop) {
-  const { board } = prop;
-  const { viewBoard } = prop;
+  const { board, viewBoard, partidaPerdida} = prop;
 
   function handleClick(event, indexF, indexC) {
     event.preventDefault();
+    if(partidaPerdida){return}
     prop.handleClick(event, indexF, indexC);
   }
 
@@ -24,13 +24,16 @@ function Board(prop) {
               color = "item-green";
             }
             if (viewBoard[indexF][indexC] === "visible") {
-              if(valor !== 0){
+              if(valor === -1){
+                valorVisible = '*'
+              }
+              else if(valor !== 0){
                 valorVisible = valor.toString();
               }
               color += "-visible";
             }
             else if (viewBoard[indexF][indexC] === "bandera"){
-              valorVisible = '*'
+              valorVisible = 'P'
             }
             else if(viewBoard[indexF][indexC] === "banderaErronea"){
               valorVisible = 'X'

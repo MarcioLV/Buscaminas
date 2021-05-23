@@ -11,9 +11,10 @@ class App extends React.Component {
     this.state = {
       nivel: 3,
       partidaPerdida: false,
+      minasRestante: 0,
       board: [],
       viewBoard: [],
-    };    
+    };
     this.handleClick = this.handleClick.bind(this);
   }
   componentDidMount() {
@@ -27,52 +28,50 @@ class App extends React.Component {
   // }
 
   handleClick(event, indexF, indexC) {
-    let { viewBoard } = this.state;
-    let {partidaPerdida} = this.state
-    if(event.button === 2){
-      if(viewBoard[indexF][indexC] === "noVisible"){
-        viewBoard[indexF][indexC] = "bandera"
+    let { viewBoard, partidaPerdida, minasRestante } = this.state;
+    if (event.button === 2) {
+      if (viewBoard[indexF][indexC] === "noVisible") {
+        viewBoard[indexF][indexC] = "bandera";
+        minasRestante--;
+      } else if (viewBoard[indexF][indexC] === "bandera") {
+        viewBoard[indexF][indexC] = "noVisible";
+        minasRestante++;
       }
-      else if(viewBoard[indexF][indexC] === "bandera"){
-        viewBoard[indexF][indexC] = "noVisible"
-      }
-    }
-    else if(event.button === 0){
+    } else if (event.button === 0) {
       let { board } = this.state;
       viewBoard[indexF][indexC] = "visible";
       //si toque mina pierdo
-      if(board[indexF][indexC] === -1){
-        partidaPerdida = true
-        viewBoard = this.mostrarMinas(board, viewBoard)
+      if (board[indexF][indexC] === -1) {
+        partidaPerdida = true;
+        viewBoard = this.mostrarMinas(board, viewBoard);
       }
       //muestro todas las minas
       //las minas con bandera no se muestran
       //las banderas mal ubicadas salen con una cruz
-  
       else if (board[indexF][indexC] === 0) {
         viewBoard = this.abrirCasillas(viewBoard, indexF, indexC);
       }
     }
-    this.setState({ viewBoard: viewBoard, partidaPerdida: partidaPerdida });
+    this.setState({
+      viewBoard: viewBoard,
+      partidaPerdida: partidaPerdida,
+      minasRestante: minasRestante,
+    });
   }
 
-  mostrarMinas(board, viewBoard){
+  mostrarMinas(board, viewBoard) {
     board.forEach((fila, indexF) => {
-      fila.forEach((item, indexC) =>{
-        //mostrar minas no descubiertas
-        //no mostrar minas con bandera
-        //mostrar X en banderas mal hubicadas
-        if(item === -1){
-          if(viewBoard[indexF][indexC] === "noVisible"){
-            viewBoard[indexF][indexC] = "visible"
+      fila.forEach((item, indexC) => {
+        if (item === -1) {
+          if (viewBoard[indexF][indexC] === "noVisible") {
+            viewBoard[indexF][indexC] = "visible";
           }
+        } else if (item !== -1 && viewBoard[indexF][indexC] === "bandera") {
+          viewBoard[indexF][indexC] = "banderaErronea";
         }
-        else if(item !== -1 && viewBoard[indexF][indexC] === "bandera"){
-          viewBoard[indexF][indexC] = "banderaErronea"
-        }
-      })
-    })
-    return viewBoard
+      });
+    });
+    return viewBoard;
   }
 
   abrirCasillas(viewBoard, indexF, indexC) {
@@ -85,14 +84,13 @@ class App extends React.Component {
         for (let c = -1; c <= 1; c++) {
           const indiceC = indexC + c;
           if (indiceC > -1 && indiceC < cols) {
-            if (
-              board[indiceF][indiceC] === 0 &&
-              viewBoard[indiceF][indiceC] === 'noVisible'
-            ) {
-              viewBoard[indiceF][indiceC] = 'visible';
-              viewBoard = this.abrirCasillas(viewBoard, indiceF, indiceC);
-            } else {
-              viewBoard[indiceF][indiceC] = 'visible';
+            if(viewBoard[indiceF][indiceC] === "noVisible"){
+              if (board[indiceF][indiceC] === 0) {
+                viewBoard[indiceF][indiceC] = "visible";
+                viewBoard = this.abrirCasillas(viewBoard, indiceF, indiceC);
+              } else {
+                viewBoard[indiceF][indiceC] = "visible";
+              }
             }
           }
         }
@@ -104,8 +102,10 @@ class App extends React.Component {
   createBoard() {
     let fila = 0;
     let col = 0;
+    let minas = 0;
 
     if (this.state.nivel === 3) {
+      minas = 99;
       fila = 20;
       col = 24;
     }
@@ -116,12 +116,15 @@ class App extends React.Component {
       viewBoard.push([]);
       for (let j = 0; j < col; j++) {
         board[i].push(0);
-        viewBoard[i].push('noVisible');
+        viewBoard[i].push("noVisible");
       }
     }
-    this.setState({ board: board, viewBoard: viewBoard }, () => {
-      this.formatBoard();
-    });
+    this.setState(
+      { board: board, viewBoard: viewBoard, minasRestante: minas },
+      () => {
+        this.formatBoard();
+      }
+    );
   }
 
   formatBoard() {
@@ -166,11 +169,12 @@ class App extends React.Component {
       <div className="game">
         <div className="container">
           <div className="tablero">
-            <Header />
+            <Header minasRestante={this.state.minasRestante} />
             <Board
               board={this.state.board}
               viewBoard={this.state.viewBoard}
               handleClick={this.handleClick}
+              partidaPerdida={this.state.partidaPerdida}
             />
           </div>
         </div>
