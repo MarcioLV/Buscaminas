@@ -1,0 +1,43 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor{
+  width: 100%;
+  height: 90vh;
+}
+
+.board{
+  display: grid;
+  height: 100%;
+  grid-template: repeat(20, 1fr) / repeat(24, 1fr);
+}
+
+.item{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-lightgreen{
+  background: #aad751;
+}
+
+.item-green{
+  background-color: #a2d149;
+}
+.item-lightgreen:hover,
+.item-green:hover
+{
+  background-color: #b7ebb3;
+}
+
+
+.item-lightgreen-visible{
+  background-color: #e5c29f;
+}
+
+.item-green-visible{
+  background-color: #d7b899;
+}
