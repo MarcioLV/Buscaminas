@@ -30,16 +30,16 @@ class App extends React.Component {
     let { viewBoard } = this.state;
     let {partidaPerdida} = this.state
     if(event.button === 2){
-      if(viewBoard[indexF][indexC] === 0){
-        viewBoard[indexF][indexC] = 2
+      if(viewBoard[indexF][indexC] === "noVisible"){
+        viewBoard[indexF][indexC] = "bandera"
       }
-      else if(viewBoard[indexF][indexC] === 2){
-        viewBoard[indexF][indexC] = 0
+      else if(viewBoard[indexF][indexC] === "bandera"){
+        viewBoard[indexF][indexC] = "noVisible"
       }
     }
     else if(event.button === 0){
       let { board } = this.state;
-      viewBoard[indexF][indexC] = 1;
+      viewBoard[indexF][indexC] = "visible";
       //si toque mina pierdo
       if(board[indexF][indexC] === -1){
         partidaPerdida = true
@@ -63,12 +63,12 @@ class App extends React.Component {
         //no mostrar minas con bandera
         //mostrar X en banderas mal hubicadas
         if(item === -1){
-          if(viewBoard[indexF][indexC] === 0){
-            viewBoard[indexF][indexC] = 1
+          if(viewBoard[indexF][indexC] === "noVisible"){
+            viewBoard[indexF][indexC] = "visible"
           }
         }
-        else if(item !== -1 && viewBoard[indexF][indexC] === 2){
-          viewBoard[indexF][indexC] = 3
+        else if(item !== -1 && viewBoard[indexF][indexC] === "bandera"){
+          viewBoard[indexF][indexC] = "banderaErronea"
         }
       })
     })
@@ -87,12 +87,12 @@ class App extends React.Component {
           if (indiceC > -1 && indiceC < cols) {
             if (
               board[indiceF][indiceC] === 0 &&
-              viewBoard[indiceF][indiceC] === 0
+              viewBoard[indiceF][indiceC] === 'noVisible'
             ) {
-              viewBoard[indiceF][indiceC] = 1;
+              viewBoard[indiceF][indiceC] = 'visible';
               viewBoard = this.abrirCasillas(viewBoard, indiceF, indiceC);
             } else {
-              viewBoard[indiceF][indiceC] = 1;
+              viewBoard[indiceF][indiceC] = 'visible';
             }
           }
         }
@@ -116,7 +116,7 @@ class App extends React.Component {
       viewBoard.push([]);
       for (let j = 0; j < col; j++) {
         board[i].push(0);
-        viewBoard[i].push(0);
+        viewBoard[i].push('noVisible');
       }
     }
     this.setState({ board: board, viewBoard: viewBoard }, () => {
