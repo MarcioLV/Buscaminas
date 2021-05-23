@@ -10,6 +10,7 @@ class App extends React.Component {
     super(prop);
     this.state = {
       nivel: 3,
+      partidaPerdida: false,
       board: [],
       viewBoard: [],
     };    
@@ -19,8 +20,15 @@ class App extends React.Component {
     this.createBoard();
   }
 
+  // componentDidUpdate(){
+  //   if(this.state.partidaPerdida){
+  //     alert('Partidad Perdida')
+  //   }
+  // }
+
   handleClick(event, indexF, indexC) {
     let { viewBoard } = this.state;
+    let {partidaPerdida} = this.state
     if(event.button === 2){
       if(viewBoard[indexF][indexC] === 0){
         viewBoard[indexF][indexC] = 2
@@ -33,12 +41,38 @@ class App extends React.Component {
       let { board } = this.state;
       viewBoard[indexF][indexC] = 1;
       //si toque mina pierdo
+      if(board[indexF][indexC] === -1){
+        partidaPerdida = true
+        viewBoard = this.mostrarMinas(board, viewBoard)
+      }
+      //muestro todas las minas
+      //las minas con bandera no se muestran
+      //las banderas mal ubicadas salen con una cruz
   
-      if (board[indexF][indexC] === 0) {
+      else if (board[indexF][indexC] === 0) {
         viewBoard = this.abrirCasillas(viewBoard, indexF, indexC);
       }
     }
-    this.setState({ viewBoard: viewBoard });
+    this.setState({ viewBoard: viewBoard, partidaPerdida: partidaPerdida });
+  }
+
+  mostrarMinas(board, viewBoard){
+    board.forEach((fila, indexF) => {
+      fila.forEach((item, indexC) =>{
+        //mostrar minas no descubiertas
+        //no mostrar minas con bandera
+        //mostrar X en banderas mal hubicadas
+        if(item === -1){
+          if(viewBoard[indexF][indexC] === 0){
+            viewBoard[indexF][indexC] = 1
+          }
+        }
+        else if(item !== -1 && viewBoard[indexF][indexC] === 2){
+          viewBoard[indexF][indexC] = 3
+        }
+      })
+    })
+    return viewBoard
   }
 
   abrirCasillas(viewBoard, indexF, indexC) {
@@ -92,7 +126,6 @@ class App extends React.Component {
 
   formatBoard() {
     let { board } = this.state;
-    //colocamos las minas
     let minas = 0;
     const filas = board.length;
     const cols = board[0].length;
@@ -109,30 +142,6 @@ class App extends React.Component {
         i--;
       }
     }
-    //colocamos los numeros alrededor de las minas
-    // board.forEach((fila, indexF) => {
-    //   fila.forEach((valor, indexC) => {
-    //     if (valor !== -1) {
-    //       let cantMinas = 0;
-    //       for (let f = -1; f <= 1; f++) {
-    //         const indiceF = indexF + f;
-    //         if (indiceF > -1 && indiceF < board.length) {
-    //           for (let c = -1; c <= 1; c++) {
-    //             const indiceC = indexC + c;
-    //             if (indiceC > -1 && indiceC < fila.length) {
-    //               if (board[indiceF][indiceC] === -1) {
-    //                 cantMinas += 1;
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //       if (cantMinas !== 0) {
-    //         board[indexF][indexC] = cantMinas;
-    //       }
-    //     }
-    //   });
-    // });
     this.setState({ board: board });
   }
   setNumberMines(board, indexF, indexC, filas, cols) {

@@ -24,11 +24,16 @@ function Board(prop) {
               color = "item-green";
             }
             if (viewBoard[indexF][indexC] === 1) {
-              valorVisible = valor.toString();
+              if(valor !== 0){
+                valorVisible = valor.toString();
+              }
               color += "-visible";
             }
-            if (viewBoard[indexF][indexC] === 2){
+            else if (viewBoard[indexF][indexC] === 2){
               valorVisible = '*'
+            }
+            else if(viewBoard[indexF][indexC] === 3){
+              valorVisible = 'X'
             }
             return (
               <div
