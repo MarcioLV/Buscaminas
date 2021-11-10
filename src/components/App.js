@@ -9,16 +9,20 @@ class App extends React.Component {
   constructor(prop) {
     super(prop);
     this.state = {
-      nivel: 3,
+      nivel: 2,
       partidaPerdida: false,
       minasRestante: 0,
+      winner: false,
+      rowCol: [],
       active: false,
       board: [],
       viewBoard: [],
     };
     this.handleClick = this.handleClick.bind(this);
     this.handleReboot = this.handleReboot.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
   }
+
   componentDidMount() {
     this.createBoard();
   }
@@ -27,14 +31,30 @@ class App extends React.Component {
     this.createBoard();
   }
 
-  // newGame(){
-  //   this.createBoard()
-  //   this.setState({partidaPerdida: false})
-  // }
+  iAmWinner() {
+    const { viewBoard, nivel, rowCol } = this.state;
+    const minas = [10, 40, 99];
+    const espaciosVacios = rowCol[0] * rowCol[1] - minas[nivel - 1];
+    let suma = 0;
+    viewBoard.forEach((fila) => {
+      const array = fila.filter((element) => element === "visible");
+      suma += array.length;
+    });
+    if (espaciosVacios === suma) {
+      return true;
+    }
+    return false;
+  }
+
+  handleSelect(nivel) {
+    const level = parseInt(nivel);
+    this.setState({ nivel: level }, () => this.createBoard());
+  }
 
   handleClick(event, indexF, indexC) {
     let { viewBoard, partidaPerdida, minasRestante, active } = this.state;
-    active = true
+    active = true;
+    let ganador;
     if (event.button === 2) {
       if (viewBoard[indexF][indexC] === "noVisible") {
         viewBoard[indexF][indexC] = "bandera";
@@ -49,16 +69,18 @@ class App extends React.Component {
 
       if (board[indexF][indexC] === -1) {
         partidaPerdida = true;
-        active = false
+        active = false;
         viewBoard = this.mostrarMinas(board, viewBoard);
       } else if (board[indexF][indexC] === 0) {
         viewBoard = this.abrirCasillas(viewBoard, indexF, indexC);
       }
+      ganador = this.iAmWinner();
     }
     this.setState({
       viewBoard: viewBoard,
       partidaPerdida: partidaPerdida,
       minasRestante: minasRestante,
+      winner: ganador,
       active: active,
     });
   }
@@ -104,60 +126,60 @@ class App extends React.Component {
   }
 
   createBoard() {
-    let fila = 0;
-    let col = 0;
-    let minas = 0;
+    let filasColumnas = [
+      [8, 10],
+      [14, 18],
+      [20, 24],
+    ];
+    let minas = [10, 40, 99];
+    const { nivel } = this.state;
 
-    if (this.state.nivel === 3) {
-      minas = 99;
-      fila = 20;
-      col = 24;
-    }
+    const rowCol = filasColumnas[nivel - 1];
+    const minasRestante = minas[nivel - 1];
+
     let board = [];
     let viewBoard = [];
-    for (let i = 0; i < fila; i++) {
+
+    for (let i = 0; i < rowCol[0]; i++) {
       board.push([]);
       viewBoard.push([]);
-      for (let j = 0; j < col; j++) {
+      for (let j = 0; j < rowCol[1]; j++) {
         board[i].push(0);
         viewBoard[i].push("noVisible");
       }
     }
-    this.setState(
-      {
-        board: board,
-        viewBoard: viewBoard,
-        minasRestante: minas,
-        partidaPerdida: false,
-        active: false,
-      },
-      () => {
-        this.formatBoard();
-      }
-    );
+    board = this.formatBoard(board, minasRestante);
+
+    this.setState({
+      board: board,
+      viewBoard: viewBoard,
+      rowCol: rowCol,
+      minasRestante: minasRestante,
+      partidaPerdida: false,
+      active: false,
+      winner: false,
+    });
   }
 
-  formatBoard() {
-    let { board } = this.state;
-    let minas = 0;
+  formatBoard(board, minas) {
     const filas = board.length;
     const cols = board[0].length;
-    if (this.state.nivel === 3) {
-      minas = 99;
-    }
     for (let i = 0; i < minas; i++) {
       const indexF = Math.floor(Math.random() * filas);
       const indexC = Math.floor(Math.random() * cols);
       if (board[indexF][indexC] !== -1) {
         board[indexF][indexC] = -1;
-        board = this.setNumberMines(board, indexF, indexC, filas, cols);
+        board = this.setNumberMines(board, indexF, indexC);
       } else {
         i--;
       }
     }
-    this.setState({ board: board });
+    return board;
   }
-  setNumberMines(board, indexF, indexC, filas, cols) {
+
+  setNumberMines(board, indexF, indexC) {
+    const filas = board.length;
+    const cols = board[0].length;
     for (let f = -1; f <= 1; f++) {
       const indiceF = indexF + f;
       if (indiceF > -1 && indiceF < filas) {
@@ -176,21 +198,26 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="game">
-        <div className="container">
-          <div className="tablero">
-            <Header
-              minasRestante={this.state.minasRestante}
-              handleReboot={this.handleReboot}
-              active={this.state.active}
-            />
-            <Board
-              board={this.state.board}
-              viewBoard={this.state.viewBoard}
-              handleClick={this.handleClick}
-              partidaPerdida={this.state.partidaPerdida}
-            />
-          </div>
+      <div className="container">
+        <div className="tablero">
+          <Header
+            minasRestante={this.state.minasRestante}
+            handleReboot={this.handleReboot}
+            active={this.state.active}
+            partidaPerdida={this.state.partidaPerdida}
+            handleSelect={this.handleSelect}
+            nivel={this.state.nivel}
+            winner={this.state.winner}
+          />
+          <Board
+            board={this.state.board}
+            viewBoard={this.state.viewBoard}
+            handleClick={this.handleClick}
+            partidaPerdida={this.state.partidaPerdida}
+            nivel={this.state.nivel}
+            rowCol={this.state.rowCol}
+            winner={this.state.winner}
+          />
         </div>
       </div>
     );

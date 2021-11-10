@@ -1,51 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+
+import Timer from "./Timer";
+import MenuDificultad from "./MenuDificultad";
 
 import "./style/Header.css";
 
-function Timer(active){
-  const [seconds, setSeconds] = useState(0);
-
-  useEffect(() => {
-    let interval
-    if(active){
-      interval = setInterval(() => {
-        setSeconds((seconds) => seconds + 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  });
-  return seconds
-}
-
 const Header = (prop) => {
-  const { minasRestante } = prop;
-  const { active } = prop 
+  const { minasRestante, active, nivel, partidaPerdida, winner } = prop;
 
-  // const [isActive, setIsActive] = useState(false)
+  let banderas = minasRestante.toString();
+  if (banderas.length < 2) {
+    banderas = "0" + banderas;
+  }
 
   function handleReboot() {
-    setSeconds(0)
     prop.handleReboot();
   }
 
-
   return (
     <div className="header">
-      <div className="dificultad">Dificil</div>
+      <div className="dificultad">
+        <MenuDificultad nivel={nivel} handleSelect={prop.handleSelect} />{" "}
+      </div>
       <div className="gameInfo">
         <div className="gameInfo_minas">
           <img
             src="https://www.google.com/logos/fnbx/minesweeper/flag_icon.png"
             className="gameInfo_minas_bandera"
           />
-          {minasRestante}
+          {banderas}
         </div>
         <div className="gameInfo_tiempo">
           <img
             src="https://www.google.com/logos/fnbx/minesweeper/clock_icon.png"
             className="gameInfo_tiempo_reloj"
           />
-          {Timer(active)}
+          <Timer
+            active={active}
+            winner={winner}
+            partidaPerdida={partidaPerdida}
+          />
         </div>
       </div>
       <div className="reiniciar" onClick={() => handleReboot()}>

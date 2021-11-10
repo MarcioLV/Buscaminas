@@ -1,0 +1,43 @@
+.winner{
+  position: fixed;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: Arial, sans-serif;
+}
+
+.winner-container{
+  width: 400px;
+  height: 200px;
+ 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: honeydew;
+  border-radius: 20px;
+}
+
+.winner-container h1{
+  font-size: 46px;
+  padding-top: 40px;
+  font-weight: lighter;
+  font-family: Arial, sans-serif;
+}
+
+.winner-container button{
+    padding: 10px 40px;
+    font-size: 18px;
+    letter-spacing: 3px;
+    background-color: darkseagreen;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    cursor: pointer;
+
+}

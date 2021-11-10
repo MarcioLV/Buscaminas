@@ -1,60 +1,96 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+import Winner from './winner'
 
 import "./style/Board.css";
 
 function Board(prop) {
-  const { board, viewBoard, partidaPerdida} = prop;
+  const { board, viewBoard, partidaPerdida, rowCol, nivel, winner } = prop;
+  const [opened, setOpened] = useState(false)
 
-  function handleClick(event, indexF, indexC) {
+  const grilla = {
+    display: "grid",
+    gridTemplate: `repeat(${rowCol[0]}, 1fr) / repeat(${rowCol[1]}, 1fr)`,
+  };
+
+  useEffect(()=>{
+    if (winner) {
+      board.forEach((fila, indexF) => {
+        fila.forEach((valor, indexC) => {
+          if (valor === -1 && viewBoard[indexF][indexC] !== "bandera") {
+            viewBoard[indexF][indexC] = "bandera";
+          }
+        });
+      });
+      setTimeout(() => setOpened(true), 100);
+    }
+  },[winner])
+
+  const handleClick = (event, indexF, indexC) => {
     event.preventDefault();
-    if(partidaPerdida){return}
+    if (partidaPerdida || winner) {
+      return;
+    }
     prop.handleClick(event, indexF, indexC);
   }
 
+  const closeModal = () => {
+    setOpened(false)
+  }
+
   return (
-    <div className="contenedor">
-      <div className="board">
-        {board.map((fila, indexF) => {
-          return fila.map((valor, indexC) => {
-            const indF = indexF.toString();
-            const indC = indexC.toString();
-            let color = "item-lightgreen";
-            let valorVisible = "";
-            if ((indexF + indexC) % 2 === 0) {
-              color = "item-green";
+    <div className="board" style={grilla}>
+      <Winner isOpened={opened} onClose={closeModal} />
+      {board.map((fila, indexF) => {
+        return fila.map((valor, indexC) => {
+          let color = "item-lightgreen";
+          let valorVisible = "";
+          let colorNumero = "numero-";
+
+          if ((indexF + indexC) % 2 === 0) {
+            color = "item-green";
+          }
+
+          if (viewBoard[indexF][indexC] === "visible") {
+            if (valor === -1) {
+              color = "item-red";
+              valorVisible = (
+                <div className="mina">
+                  <div className="mina_center"></div>
+                </div>
+
+);
+            } else if (valor !== 0) {
+              valorVisible = valor.toString();
+              colorNumero += valorVisible;
             }
-            if (viewBoard[indexF][indexC] === "visible") {
-              if(valor === -1){
-                valorVisible = '*'
-              }
-              else if(valor !== 0){
-                valorVisible = valor.toString();
-              }
-              color += "-visible";
-            }
-            else if (viewBoard[indexF][indexC] === "bandera"){
-              valorVisible = 'P'
-            }
-            else if(viewBoard[indexF][indexC] === "banderaErronea"){
-              valorVisible = 'X'
-            }
-            return (
-              <div
-                className={`item ${color}`}
-                key={indF + indC}
-                onClick={(event) => {
-                  if (valorVisible === "") {
-                    handleClick(event, indexF, indexC);
-                  }
-                }}
-                onContextMenu={(event) => handleClick(event, indexF, indexC)}
-              >
-                {valorVisible}
-              </div>
+            color += "-visible";
+          } else if (viewBoard[indexF][indexC] === "bandera") {
+            valorVisible = (
+              <img
+                className="bandera_img"
+                src="https://www.google.com/logos/fnbx/minesweeper/flag_icon.png"
+              />
             );
-          });
-        })}
-      </div>
+          } else if (viewBoard[indexF][indexC] === "banderaErronea") {
+            valorVisible += "X";
+          }
+          return (
+            <div
+              className={`item ${color} ${colorNumero}`}
+              key={indexF.toString() + indexC.toString()}
+              onClick={(event) => {
+                if (valorVisible === "") {
+                  handleClick(event, indexF, indexC);
+                }
+              }}
+              onContextMenu={(event) => handleClick(event, indexF, indexC)}
+            >
+              {valorVisible}
+            </div>
+          );
+        });
+      })}
     </div>
   );
 }

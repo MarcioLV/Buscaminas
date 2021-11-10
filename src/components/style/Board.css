@@ -3,15 +3,11 @@
   padding: 0;
 }
 
-.contenedor{
-  /* width: 550px; */
-  height: inherit;
-}
-
 .board{
-  display: grid;
+  /* display: grid; */
+  width: 100%;
   height: 100%;
-  grid-template: repeat(20, 1fr) / repeat(24, 1fr);
+  /* grid-template: repeat(20, 1fr) / repeat(24, 1fr); */
 }
 
 .item{
@@ -19,6 +15,8 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  font-weight: bold;
+  font-size: 21px;
 }
 
 .item-lightgreen{
@@ -28,6 +26,7 @@
 .item-green{
   background-color: #a2d149;
 }
+
 .item-lightgreen:hover,
 .item-green:hover
 {
@@ -41,4 +40,56 @@
 
 .item-green-visible{
   background-color: #d7b899;
+}
+
+.item-red-visible{
+  background-color: rgb(219, 163, 163);
+}
+
+.bandera_img,
+.mina_img
+{
+  width: 23px;
+}
+
+.mina{
+  height: 100%;
+  width: 100%;
+  background-color: #e64c4f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mina_center{
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  background-color: #990a0d56;
+}
+
+
+.numero-1{
+  color: #1976d2
+}
+.numero-2{
+  color: #388e3c
+}
+.numero-3{
+  color: #d64c45
+}
+.numero-4{
+  color: #7b1fa2
+}
+.numero-5{
+  color: #885d0dcb
+}
+.numero-6{
+  color: #14aec9
+}
+.numero-7{
+  color: #19d222
+}
+.numero-8{
+  color: #d21919
 }

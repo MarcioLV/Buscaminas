@@ -3,23 +3,20 @@
   padding: 0;
 }
 
-.game{
-  /* height: 100vh; */
-  height: 600px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+body{
   background: #333333;
 }
 
 .container{
-  height: inherit;
-  width: 600px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .tablero{
-  width: 100%;
-  height: inherit;
+  width: 600px;
+  height: 560px;
   display: flex;
   flex-direction: column;
 }

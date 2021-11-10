@@ -1,0 +1,42 @@
+.MenuDificultad{
+  margin: 10px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+
+.dificultad-flecha{
+  margin-left: 5px;
+  width: 10px;
+}
+
+.dificultad-list-ul{
+  position: absolute;
+  margin-top:8px;
+  margin-left:-10px;
+  /* padding: 0 24px 0 17px; */
+  border-radius: 6px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.dificultad-list-ul{
+  list-style: none;
+}
+.dificultad-list-ul li{
+  border-radius: 6px;
+  padding: 5px 24px 5px 12px;
+}
+ul{
+  background-color: green;
+}
+
+.dificultad-list-ul li:hover{
+  background-color:lavender;
+}
